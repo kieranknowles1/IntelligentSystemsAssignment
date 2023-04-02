@@ -1,0 +1,81 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{hyperref}
+
+% cspell: disable
+% Using Grammarly instead
+
+\immediate\write18{texcount -inc -sum -1 assignment.tex > wordcount.tmp}
+\newcommand\wordcount{
+    \input{wordcount.tmp}
+}
+
+\begin{document}
+
+% Cover sheet
+%TC: ignore
+{\Large \textbf{Cover Sheet}}
+
+Kieran Knowles
+
+w20013000
+
+Computer Science
+
+Intelligent Systems KF5042
+
+Submission date: \today
+
+Word count: \wordcount
+
+%TC: endignore
+
+\title{How the emphasis of sentiments in training data can impact the performance of a sentiment analysis model}
+\author{Kieran Knowles}
+\maketitle
+
+\begin{abstract}
+    //TODO: This
+
+\end{abstract}
+
+\section{Introduction}
+//TODO: This
+
+\section{Literature Review}
+//TODO: This
+
+\section{Methods}
+\subsection{Training Data}
+Dialogue from the game The Elder Scrolls IV: Oblivion was used as training data for the model. //TODO: Why?
+This game is known for its dialogue often being overacted, in part due to its actors being given
+their lines in alphabetical order. //TODO: Source
+
+The idea for using a video game as a corpus came from Hämäläinen et al., \cite{hamalainen_video_2022}
+In which the game Fallout New Vegas was used as training data with accuracies that
+"... are rather low, but they are
+in line with the usual accuracies obtained in similar multilabel NLP
+classification tasks" \cite[sec. 6]{hamalainen_video_2022}
+
+Oblivion uses the same system in which every line of dialog is annotated with a sentiment
+and the game is voiced in the same five languages.
+//TODO: This
+\subsection{Considerations}
+//TODO: This. Lack of actor variety
+
+\subsection{Data Extraction}
+
+\section{Results and Discussion}
+//TODO: This
+
+\section{Conclusion and future work}
+//TODO: This
+
+%TC: ignore
+
+\bibliographystyle{IEEEtran}
+\bibliography{assignment}
+
+%TC: endignore
+
+\end{document}
