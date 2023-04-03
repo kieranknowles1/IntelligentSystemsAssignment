@@ -5,6 +5,7 @@
 % cspell: disable
 % Using Grammarly instead
 
+% https://tex.stackexchange.com/questions/534/is-there-any-way-to-do-a-correct-word-count-of-a-latex-document
 \immediate\write18{texcount -inc -sum -1 assignment.tex > wordcount.tmp}
 \newcommand\wordcount{
     \input{wordcount.tmp}
@@ -28,11 +29,11 @@ Submission date: \today
 
 Word count: \wordcount
 
-%TC: endignore
-
-\title{How the emphasis of sentiments in training data can impact the performance of a sentiment analysis model}
+\title{A Comparative Study of how the Emphasis of Sentiments in Training Data can Impact the Performance of a Sentiment Analysis Model}
 \author{Kieran Knowles}
 \maketitle
+
+%TC: endignore
 
 \begin{abstract}
     //TODO: This
@@ -40,30 +41,61 @@ Word count: \wordcount
 \end{abstract}
 
 \section{Introduction}
+This paper aims to study how the emphasis of sentiments in training data can impact the performance of a sentiment analysis
+model. The hypothesis is that having more emphasised emotions in training data can improve the performance of the resulting
+model, even when running on less emphasised speech.
+
+While sentiment analysis has existed for decades, existing research has primarily focused on
+its use on text rather than speech. //TODO: Source
+
+This review is incomplete however as it doesn't cover the impact of emphasis of emotions in training data.
+Whilst researching this subject, no papers on the subject were found.
+This could be due to the fact that speech sentiment analysis is a relatively new field of research. \cite{maghilnan_sentiment_2017}
+
 //TODO: This
 
 \section{Literature Review}
+
 //TODO: This
 
 \section{Methods}
 \subsection{Training Data}
 Dialogue from the game The Elder Scrolls IV: Oblivion was used as training data for the model. //TODO: Why?
-This game is known for its dialogue often being overacted, in part due to its actors being given
+This game is known for its dialogue often being overacted, partly due to its actors being given
 their lines in alphabetical order. //TODO: Source
 
-The idea for using a video game as a corpus came from Hämäläinen et al., \cite{hamalainen_video_2022}
+The idea of using a video game as a corpus came from Hämäläinen et al.'s paper, \cite{hamalainen_video_2022}
 In which the game Fallout New Vegas was used as training data with accuracies that
-"... are rather low, but they are
-in line with the usual accuracies obtained in similar multilabel NLP
+"... are rather low, but they are in line with the usual accuracies obtained in similar multilabel NLP
 classification tasks" \cite[sec. 6]{hamalainen_video_2022}
 
-Oblivion uses the same system in which every line of dialog is annotated with a sentiment
-and the game is voiced in the same five languages.
+Oblivion uses the same system in which every line of dialogue is annotated with a sentiment
+and the game is voiced in the same five languages (English, French, Italian, German, and Spanish).
+Each line of dialogue is annotated with one of 7 sentiments: anger, disgust, fear, happy, neutral, sad, and surprised.
+
+//TODO: How to test if the emphasis does anything. Need different data for that
+
 //TODO: This
 \subsection{Considerations}
-//TODO: This. Lack of actor variety
+//TODO: This. Lack of actor variety, copyright (maybe in results and discussion)
 
 \subsection{Data Extraction}
+//TODO: This. Mutagen or xEdit?
+
+\begin{tabular}{| l | l |}
+    \hline
+    Sentiment & Number of Samples \\ \hline
+    Angry & \\ \hline
+    Disgusted & \\ \hline
+    Fearful & \\ \hline
+    Happy & \\ \hline
+    Neutral & \\ \hline
+    Sad & \\ \hline
+    Surprised & \\ \hline
+\end{tabular}
+
+\subsection{Source Code}
+//TODO: How to include this?
 
 \section{Results and Discussion}
 //TODO: This
