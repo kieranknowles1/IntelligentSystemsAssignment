@@ -11,3 +11,11 @@
 
 # Temporary files
 *.tmp
+
+# Compiler output
+bin/
+obj/
+.vs/
+
+# Extracted data
+in/

@@ -1,5 +1,6 @@
 \documentclass[journal]{IEEEtran}
 
+\usepackage{csvsimple}
 \usepackage{hyperref}
 
 % cspell: disable
@@ -80,18 +81,19 @@ Each line of dialogue is annotated with one of 7 sentiments: anger, disgust, fea
 //TODO: This. Lack of actor variety, copyright (maybe in results and discussion)
 
 \subsection{Data Extraction}
-//TODO: This. Mutagen or xEdit?
+Due to the instability Fallout New Vegas' official tools as reported by Hämäläinen et al., \cite{hamalainen_video_2022},
+which were assumed to be the same for Oblivion, the data was instead extracted using a custom script
+written using the Mutagen library \cite{noauthor_mutagen_2023}
 
-\begin{tabular}{| l | l |}
+
+//TODO: This
+
+\begin{tabular}{| l | c |}
     \hline
-    Sentiment & Number of Samples \\ \hline
-    Angry & \\ \hline
-    Disgusted & \\ \hline
-    Fearful & \\ \hline
-    Happy & \\ \hline
-    Neutral & \\ \hline
-    Sad & \\ \hline
-    Surprised & \\ \hline
+    Category & Sample Count
+    \csvreader[head to column names]{src/out/category_counts.csv}{}%
+        {\\ \hline \Name & \Count}%
+    \\ \hline
 \end{tabular}
 
 \subsection{Source Code}
