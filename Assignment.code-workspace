@@ -5,39 +5,6 @@
         }
     ],
     "settings": {
-        "grammarly.files.include": [
-            "**/readme.md",
-            "**/README.md",
-            "**/*.txt",
-            "**/*.tex",
-        ],
-        "grammarly.config.suggestions.OxfordComma": true,
-        "grammarly.config.suggestions.InformalPronounsAcademic": true,
 
-        "latex-workshop.latex.recipe.default": "first",
-        "latex-workshop.latex.recipes": [
-            {
-                "name": "latexmk",
-                "tools": [
-                    "latexmk"
-                ]
-            },
-        ],
-        "latex-workshop.latex.tools": [
-            {
-                "name": "latexmk",
-                "command": "latexmk",
-                "args": [
-                    "-shell-escape", // Added
-                    "-synctex=1",
-                    "-interaction=nonstopmode",
-                    "-file-line-error",
-                    "-pdf",
-                    "-outdir=%OUTDIR%",
-                    "%DOC%"
-                ],
-                "env": {}
-            },
-        ]
     },
 }

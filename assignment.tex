@@ -59,13 +59,20 @@ This could be due to the fact that speech sentiment analysis is a relatively new
 
 //TODO: This
 
+As the purpose of this study was to determine how the emphasis of speech affects
+the performance of a model, only the audio from the training data was used as input,
+for the model despite hybrid models being more accurate. \cite{bhaskar_hybrid_2015}
+
 \section{Methods}
+\subsection{Model}
+//TODO: This
+
 \subsection{Training Data}
 Dialogue from the game The Elder Scrolls IV: Oblivion was used as training data for the model. //TODO: Why?
 This game is known for its dialogue often being overacted, partly due to its actors being given
 their lines in alphabetical order. //TODO: Source
 
-The idea of using a video game as a corpus came from Hämäläinen et al.'s paper, \cite{hamalainen_video_2022}
+The idea of using a video game as training data came from Hämäläinen et al.'s paper, \cite{hamalainen_video_2022}
 In which the game Fallout New Vegas was used as training data with accuracies that
 "... are rather low, but they are in line with the usual accuracies obtained in similar multilabel NLP
 classification tasks" \cite[sec. 6]{hamalainen_video_2022}
@@ -80,21 +87,47 @@ Each line of dialogue is annotated with one of 7 sentiments: anger, disgust, fea
 \subsection{Considerations}
 //TODO: This. Lack of actor variety, copyright (maybe in results and discussion)
 
-\subsection{Data Extraction}
-Due to the instability Fallout New Vegas' official tools as reported by Hämäläinen et al., \cite{hamalainen_video_2022},
-which were assumed to be the same for Oblivion, the data was instead extracted using a custom script
-written using the Mutagen library \cite{noauthor_mutagen_2023}
+Some lines of dialogue have actor notes which provided additional context to
+the voice actors. These notes may lead actors to show a sentiment that does not
+match the emotion annotated in the dialogue itself.
 
+Additionally, the neutral emotion is the default emotion for any new line in the editor.
+Because of this, some lines were never annotated with a sentiment despite the recorded
+dialogue showing emotion. See table \ref{table:bad_annotation}
+
+\begin{table}[h]
+    \begin{tabular}{| c | l |}
+        \hline
+        Text & Don't try to manipulate me. \\ \hline
+        Annotation & Neutral \\ \hline
+        File & oblivion.esm\textbackslash nord\textbackslash f\textbackslash generic\textunderscore admirehate\textunderscore 00062311\textunderscore 1.mp3 \\ \hline
+        Actual emotion & Anger \\ \hline
+    \end{tabular}
+    \caption{An example of a lines annotation not matching the recording}
+    \label{table:bad_annotation}
+\end{table}
+
+\subsection{Data Extraction}
+Due to the instability of Fallout New Vegas' official tools as reported by Hämäläinen et al., \cite{hamalainen_video_2022},
+which was assumed to be the same for Oblivion, the data was instead extracted using a custom script
+written using the Mutagen library. \cite{noauthor_mutagen_2023}
+This script outputs a CSV file containing the dialogue, the sentiment, and its extracted file path.
+
+See table \ref{table:category_counts} for a breakdown of the number of samples in each category.
 
 //TODO: This
 
-\begin{tabular}{| l | c |}
-    \hline
-    Category & Sample Count
-    \csvreader[head to column names]{src/out/category_counts.csv}{}%
-        {\\ \hline \Name & \Count}%
-    \\ \hline
-\end{tabular}
+\begin{table}[h]
+    \begin{tabular}{| c | c |}
+        \hline
+        Category & Sample Count
+        \csvreader[head to column names]{src/out/category_counts.csv}{}%
+            {\\ \hline \Name & \Count}%
+        \\ \hline
+    \end{tabular}
+    \caption{The number of samples in each category}
+    \label{table:category_counts}
+\end{table}
 
 \subsection{Source Code}
 //TODO: How to include this?
