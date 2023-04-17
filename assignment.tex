@@ -63,10 +63,12 @@ As the purpose of this study was to determine how the emphasis of speech affects
 the performance of a model, only the audio from the training data was used as input,
 for the model despite hybrid models being more accurate. \cite{bhaskar_hybrid_2015}
 
-\section{Methods}
-\subsection{Model}
+\subsection{Algorithm Selection}
 //TODO: This
 
+
+
+\section{Methods}
 \subsection{Training Data}
 Dialogue from the game The Elder Scrolls IV: Oblivion was used as training data for the model. //TODO: Why?
 This game is known for its dialogue often being overacted, partly due to its actors being given
@@ -114,6 +116,8 @@ written using the Mutagen library. \cite{noauthor_mutagen_2023}
 This script outputs a CSV file containing the dialogue, the sentiment, and its extracted file path.
 
 See table \ref{table:category_counts} for a breakdown of the number of samples in each category.
+
+The data extraction script outputs a CSV file that can then be imported into MATLAB.
 
 //TODO: This
 

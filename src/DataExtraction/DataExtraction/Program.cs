@@ -5,6 +5,7 @@ using Mutagen.Bethesda.Oblivion;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Assets;
 using Mutagen.Bethesda.Plugins.Order;
+using NAudio.Wave;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -70,6 +71,28 @@ public static class Program
 
     }
 
+    public static bool IsMp3Valid(Stream data)
+    {
+        try
+        {
+            using (var reader = new Mp3FileReader(data))
+            {
+                // Read all frames, but don't do anything with them to validate the file
+                while (reader.ReadNextFrame() != null)
+                {
+
+                }
+            }
+
+            return true;
+        }
+        catch (InvalidDataException e)
+        {
+            Console.WriteLine(e.Message);
+            return false;
+        }
+    }
+
     public static IOblivionLoadOrder CreateLoadOrder(string dataDir, List<string> plugins)
     {
         var pluginMods = plugins
@@ -95,7 +118,7 @@ public static class Program
             .ToDictionary(group => group.Key, group => group.ToList());
 
 
-        foreach (var response in loadOrder.PriorityOrder.DialogItem().WinningOverrides())
+        Parallel.ForEach(loadOrder.PriorityOrder.DialogItem().WinningOverrides(), response =>
         {
             for (int i = 0; i < response.Responses.Count; i++)
             {
@@ -106,16 +129,26 @@ public static class Program
 
                 foreach (var file in files)
                 {
-                    var extractedPath = Path.Combine("voice", languageCode, file.Path);
+                    // Some files are empty or corrupted. Remove them here
+                    byte[] bytes = file.GetBytes();
+                    if (IsMp3Valid(new MemoryStream(bytes)))
+                    {
+                        //Console.WriteLine($"Extract {file.Path}");
+                        var extractedPath = Path.Combine("voice", languageCode, file.Path);
 
-                    Console.WriteLine($"Extract file '{extractedPath}' for INFO {response.FormKey}_{i+1}");
-                    Directory.CreateDirectory(Path.GetDirectoryName(extractedPath));
-                    File.WriteAllBytes(extractedPath, file.GetBytes());
+                        Directory.CreateDirectory(Path.GetDirectoryName(extractedPath));
+                        File.WriteAllBytes(extractedPath, bytes);
 
-                    lines.Add(new Line(line, extractedPath));
+                        lock (lines)
+                            lines.Add(new Line(line, extractedPath));
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Invalid MP3 {file.Path}");
+                    }
                 }
             }
-        }
+        });
 
         return lines;
     }
