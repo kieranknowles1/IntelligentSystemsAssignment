@@ -12,6 +12,7 @@
 # Temporary files
 *.tmp
 *.asv
+Backup/
 
 # Compiler output
 bin/
