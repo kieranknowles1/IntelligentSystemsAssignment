@@ -177,7 +177,7 @@ public static class Program
         // Using game pass version as it downloads all languages
         // The only DLCs included are KOTN and Shivering isles. These and the base game include
         // vast majority of dialogue anyway
-        var plugins = new List<string>()
+        var oblivionPlugins = new List<string>()
         {
             "Oblivion.esm",
             "DLCShiveringIsles.esp",
@@ -185,7 +185,7 @@ public static class Program
         };
 
         // Only need archives containing dialogue
-        var archives = new List<string>()
+        var oblivionArchives = new List<string>()
         {
             "Oblivion - Voices1.bsa",
             "Oblivion - Voices2.bsa",
@@ -194,9 +194,9 @@ public static class Program
         };
 
         // TODO: Dehardcode
-        var dataRoot = @"E:\XboxGames\The Elder Scrolls IV- Oblivion (PC)\Content";
+        var oblivionDataRoot = @"E:\XboxGames\The Elder Scrolls IV- Oblivion (PC)\Content";
 
-        var dataDirs = new List<string>()
+        var oblivionDataDirs = new List<string>()
         {
             @"Oblivion GOTY English\Data",
             @"Oblivion GOTY French\Data",
@@ -205,9 +205,9 @@ public static class Program
             @"Oblivion GOTY Spanish\Data",
         };
 
-        var data = ExtractData(plugins, archives, dataRoot, dataDirs);
+        var data = ExtractData(oblivionPlugins, oblivionArchives, oblivionDataRoot, oblivionDataDirs);
 
-        using var writer = new StreamWriter("extracted_data.csv");
+        using var writer = new StreamWriter("extracted_data_oblivion.csv");
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csv.WriteRecords(data);
     }

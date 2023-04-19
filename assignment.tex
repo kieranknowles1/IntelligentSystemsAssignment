@@ -51,7 +51,8 @@ its use on text rather than speech. //TODO: Source
 
 This review is incomplete however as it doesn't cover the impact of emphasis of emotions in training data.
 Whilst researching this subject, no papers on the subject were found.
-This could be due to the fact that speech sentiment analysis is a relatively new field of research. \cite{maghilnan_sentiment_2017}
+This could be due to the fact that "audio sentiment analysis is still in a nascent stage
+in the research community". \cite{maghilnan_sentiment_2017}
 
 //TODO: This
 
@@ -66,26 +67,22 @@ for the model despite hybrid models being more accurate. \cite{bhaskar_hybrid_20
 \subsection{Algorithm Selection}
 //TODO: This
 
+\subsection{Training Data}
+Video games have previously been used as training data for sentiment analysis models, such as
+Hämäläinen et al.'s paper, \cite{hamalainen_video_2022} which used Fallout New Vegas as training data.
 
+This study uses the games Fallout New Vegas and The Elder Scrolls IV: Oblivion as training data as
+Oblivion uses the same system in which every line of dialogue is annotated with a sentiment
+(anger, disgust, fear, happy, neutral, sad, and surprised) and the game is voiced in the same five languages
+(English, French, Italian, German, and Spanish).
+
+This over-emphasis may be due to the fact that the game's voice actors were given their lines
+in alphabetical order. \cite{noclip_-_video_game_documentaries_music_2018}
+
+Fallout New Vegas was chosen as a second dataset as it uses a similar system, which
+allows for the same code to be used to extract the data from both games.
 
 \section{Methods}
-\subsection{Training Data}
-Dialogue from the game The Elder Scrolls IV: Oblivion was used as training data for the model. //TODO: Why?
-This game is known for its dialogue often being overacted, partly due to its actors being given
-their lines in alphabetical order. //TODO: Source
-
-The idea of using a video game as training data came from Hämäläinen et al.'s paper, \cite{hamalainen_video_2022}
-In which the game Fallout New Vegas was used as training data with accuracies that
-"... are rather low, but they are in line with the usual accuracies obtained in similar multilabel NLP
-classification tasks" \cite[sec. 6]{hamalainen_video_2022}
-
-Oblivion uses the same system in which every line of dialogue is annotated with a sentiment
-and the game is voiced in the same five languages (English, French, Italian, German, and Spanish).
-Each line of dialogue is annotated with one of 7 sentiments: anger, disgust, fear, happy, neutral, sad, and surprised.
-
-//TODO: How to test if the emphasis does anything. Need different data for that
-
-//TODO: This
 \subsection{Considerations}
 //TODO: This. Lack of actor variety, copyright (maybe in results and discussion)
 
@@ -115,7 +112,7 @@ which was assumed to be the same for Oblivion, the data was instead extracted us
 written using the Mutagen library. \cite{noauthor_mutagen_2023}
 This script outputs a CSV file containing the dialogue, the sentiment, and its extracted file path.
 
-See table \ref{table:category_counts} for a breakdown of the number of samples in each category.
+See table \ref{table:category_counts_oblivion} for a breakdown of the number of samples in each category.
 
 The data extraction script outputs a CSV file that can then be imported into MATLAB.
 
@@ -125,13 +122,25 @@ The data extraction script outputs a CSV file that can then be imported into MAT
     \begin{tabular}{| c | c |}
         \hline
         Category & Sample Count
-        \csvreader[head to column names]{src/out/category_counts.csv}{}%
+        \csvreader[head to column names]{src/out/category_counts_oblivion.csv}{}%
             {\\ \hline \Name & \Count}%
         \\ \hline
     \end{tabular}
-    \caption{The number of samples in each category}
-    \label{table:category_counts}
+    \caption{The number of samples in each category for Oblivion}
+    \label{table:category_counts_oblivion}
 \end{table}
+
+% \begin{table}[h]
+%     \begin{tabular}{| c | c |}
+%         \hline
+%         Category & Sample Count
+%         \csvreader[head to column names]{src/out/category_counts_new_vegas.csv}{}%
+%             {\\ \hline \Name & \Count}%
+%         \\ \hline
+%     \end{tabular}
+%     \caption{The number of samples in each category for New Vegas}
+%     \label{table:category_counts_new_vegas}
+% \end{table}
 
 \subsection{Source Code}
 //TODO: How to include this?
