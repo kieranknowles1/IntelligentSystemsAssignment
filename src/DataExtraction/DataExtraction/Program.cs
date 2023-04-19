@@ -6,6 +6,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Assets;
 using Mutagen.Bethesda.Plugins.Order;
 using NAudio.Wave;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -71,7 +72,7 @@ public static class Program
 
     }
 
-    public static bool IsMp3Valid(Stream data)
+    public static bool IsMp3Valid(Stream data, [NotNullWhen(false)] out string? error)
     {
         try
         {
@@ -84,11 +85,12 @@ public static class Program
                 }
             }
 
+            error = null;
             return true;
         }
         catch (InvalidDataException e)
         {
-            Console.WriteLine(e.Message);
+            error = e.Message;
             return false;
         }
     }
@@ -131,7 +133,7 @@ public static class Program
                 {
                     // Some files are empty or corrupted. Remove them here
                     byte[] bytes = file.GetBytes();
-                    if (IsMp3Valid(new MemoryStream(bytes)))
+                    if (IsMp3Valid(new MemoryStream(bytes), out var error))
                     {
                         //Console.WriteLine($"Extract {file.Path}");
                         var extractedPath = Path.Combine("voice", languageCode, file.Path);
@@ -144,7 +146,8 @@ public static class Program
                     }
                     else
                     {
-                        Console.WriteLine($"Invalid MP3 {file.Path}");
+                        Console.WriteLine($"Invalid MP3 {file.Path}:");
+                        Console.WriteLine(error);
                     }
                 }
             }
