@@ -208,6 +208,25 @@ public static class Program
             @"Oblivion GOTY Spanish\Data",
         };
 
+        // Like Oblivion, only include plugins and archives with dialogue
+        var newVegasPlugins = new List<string>()
+        {
+            "FalloutNV.esm",
+            "DeadMoney.esm",
+            "HonestHearts.esm",
+            "LonesomeRoad.esm",
+            "OldWorldBlues.esm",
+        };
+
+        var newVegasArchives = new List<string>()
+        {
+            "Fallout - Voices1.bsa",
+            "DeadMoney - Main.bsa",
+            "HonestHearts - Main.bsa",
+            "LonesomeRoad - Main.bsa",
+            "OldWorldBlues - Main.bsa",
+        };
+
         var data = ExtractData(oblivionPlugins, oblivionArchives, oblivionDataRoot, oblivionDataDirs);
 
         using var writer = new StreamWriter("extracted_data_oblivion.csv");
