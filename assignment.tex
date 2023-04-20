@@ -77,7 +77,7 @@ Oblivion uses the same system in which every line of dialogue is annotated with 
 (English, French, Italian, German, and Spanish).
 
 This over-emphasis may be due to the fact that the game's voice actors were given their lines
-in alphabetical order. \cite{noclip_-_video_game_documentaries_music_2018}
+in alphabetical order. \cite[1:00]{noclip_-_video_game_documentaries_music_2018}
 
 Fallout New Vegas was chosen as a second dataset as it uses a similar system, which
 allows for the same code to be used to extract the data from both games.
@@ -92,7 +92,7 @@ match the emotion annotated in the dialogue itself.
 
 Additionally, the neutral emotion is the default emotion for any new line in the editor.
 Because of this, some lines were never annotated with a sentiment despite the recorded
-dialogue showing emotion. See table \ref{table:bad_annotation}
+dialogue showing a specific emotion. See table \ref{table:bad_annotation}
 
 \begin{table}[h]
     \begin{tabular}{| c | l |}
@@ -112,7 +112,7 @@ which was assumed to be the same for Oblivion, the data was instead extracted us
 written using the Mutagen library. \cite{noauthor_mutagen_2023}
 This script outputs a CSV file containing the dialogue, the sentiment, and its extracted file path.
 
-See table \ref{table:category_counts_oblivion} for a breakdown of the number of samples in each category.
+See tables \ref{table:category_counts_oblivion} and \ref{table:category_counts_new_vegas} for a breakdown of the number of samples in each category.
 
 The data extraction script outputs a CSV file that can then be imported into MATLAB.
 
