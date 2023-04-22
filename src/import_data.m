@@ -4,7 +4,7 @@
 [annotations_ob, datastore_ob] = load_data("in/oblivion/extracted_data_oblivion.csv", "in/oblivion/voice/");
 write_counts_table(annotations_ob.EmotionType, "out/category_counts_oblivion.csv");
 
-[annotations_nv, datastore_nv] = load_data("in/newvegas/extracted_data_new_vegas.csv", "in/oblivion/voice/");
+[annotations_nv, datastore_nv] = load_data("in/newvegas/extracted_data_new_vegas.csv", "in/newvegas/voice/");
 write_counts_table(annotations_nv.EmotionType, "out/category_counts_new_vegas.csv");
 
 function [annotations, datastore] = load_data(csvPath, voicePath)
