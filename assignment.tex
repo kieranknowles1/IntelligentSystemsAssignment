@@ -65,7 +65,9 @@ the performance of a model, only the audio from the training data was used as in
 for the model despite hybrid models being more accurate. \cite{bhaskar_hybrid_2015}
 
 \subsection{Algorithm Selection}
-//TODO: This
+A bidirectional Long Short-Term Memory (BLSTM) model was selected for this study as previous studies
+have found that "the proposed LSTM-based technique leads to the best average recognition performance
+that has been reported for this task so far." \cite{wollmer_lstm-modeling_2013}
 
 \subsection{Training Data}
 Video games have previously been used as training data for sentiment analysis models, such as in
@@ -82,6 +84,14 @@ in alphabetical order. \cite[1:00]{noclip_-_video_game_documentaries_music_2018}
 
 Fallout New Vegas was chosen as a second dataset as it uses a similar system, which
 allows for the same code to be used to extract the data from both games.
+
+\subsection{Limitations}
+Human emotion is more complex than the per-line classifications used in this study and is instead
+"a continuum" and that "common sense and psychological studies suggest that the full spectrum of
+human emotion cannot be expressed by a few discrete classes" \cite{wollmer_abandoning_2008}
+
+As the data used in this study only contains per-line classifications with seven possible emotions,
+this is a limitation of the study that cannot be overcome with the used data.
 
 \section{Methods}
 \subsection{Considerations}
@@ -120,27 +130,31 @@ The data extraction script outputs a CSV file that can then be imported into MAT
 //TODO: This
 
 \begin{table}[h]
-    \begin{tabular}{| c | c |}
-        \hline
-        Category & Sample Count
-        \csvreader[head to column names]{src/out/category_counts_oblivion.csv}{}%
+    \begin{center}
+        \begin{tabular}{| c | c |}
+            \hline
+            Category & Sample Count
+            \csvreader[head to column names]{src/out/category_counts_oblivion.csv}{}%
             {\\ \hline \Name & \Count}%
-        \\ \hline
-    \end{tabular}
-    \caption{The number of samples in each category for Oblivion}
-    \label{table:category_counts_oblivion}
+            \\ \hline
+        \end{tabular}
+        \caption{The number of samples in each category for Oblivion}
+        \label{table:category_counts_oblivion}
+    \end{center}
 \end{table}
 
 % \begin{table}[h]
-%     \begin{tabular}{| c | c |}
-%         \hline
-%         Category & Sample Count
-%         \csvreader[head to column names]{src/out/category_counts_new_vegas.csv}{}%
+%     \begin{center}
+%         \begin{tabular}{| c | c |}
+%             \hline
+%             Category & Sample Count
+%             \csvreader[head to column names]{src/out/category_counts_new_vegas.csv}{}%
 %             {\\ \hline \Name & \Count}%
-%         \\ \hline
-%     \end{tabular}
-%     \caption{The number of samples in each category for New Vegas}
-%     \label{table:category_counts_new_vegas}
+%             \\ \hline
+%         \end{tabular}
+%         \caption{The number of samples in each category for New Vegas}
+%         \label{table:category_counts_new_vegas}
+%     \end{center}
 % \end{table}
 
 \subsection{Source Code}
