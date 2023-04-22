@@ -5,6 +5,9 @@ using Mutagen.Bethesda.Oblivion;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Assets;
 using Mutagen.Bethesda.Plugins.Order;
+using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Skyrim;
+using NAudio.Vorbis;
 using NAudio.Wave;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -33,33 +36,51 @@ public struct InfoIndex
 
 public class Line
 {
-    public Line(IDialogResponseGetter response, string extractedPath)
+    public Line(Mutagen.Bethesda.Oblivion.IDialogResponseGetter response, string extractedPath)
     {
         if (response.ResponseText == null || response.Data == null)
             throw new ArgumentException("Null text or data", nameof(response));
 
         Text = response.ResponseText;
-        EmotionType = response.Data.Emotion;
+        EmotionType = response.Data.Emotion.ToString();
         EmotionValue = response.Data.EmotionValue;
         ExtractedPath = extractedPath;
     }
 
+    public Line(Mutagen.Bethesda.Skyrim.IDialogResponseGetter response, string extractedPath)
+    {
+        if (response.Text?.String == null)
+            throw new ArgumentException("Null text", nameof(response));
+
+        Text = response.Text.String;
+        EmotionType = response.Emotion.ToString();
+
+        // Skyrim changed this enum value to puzzled, was pained in new vegas
+        if (response.Emotion == Emotion.Puzzled)
+            EmotionType = "Pained";
+
+        EmotionValue = (int)response.EmotionValue;
+        ExtractedPath = extractedPath;
+    }
+
     public string Text { get; }
-    public EmotionType EmotionType { get; }
+    public string EmotionType { get; }
     public int EmotionValue { get; }
     public string ExtractedPath { get; }
 }
 
-public static class Program
+public abstract class Patcher<TMod, TDialogInfo, TInfoEntry>
+    where TMod : class, IModGetter
+    where TDialogInfo : class, IMajorRecordGetter
 {
-    public static readonly Regex VoiceRegex = new(@"sound\\voice\\(?<plugin>\w+\.es[mp])\\[a-z ]+\\[mf]\\\w+[0-9a-f]{2}(?<info>[0-9a-f]{6})_(?<index>\d+)\.mp3", RegexOptions.IgnoreCase);
+    public static readonly Regex VoiceRegex = new(@"sound\\voice\\(?<plugin>\w+\.es[mp])\\\w+\\([mf]\\)?\w+[0-9a-f]{2}(?<info>[0-9a-f]{6})_(?<index>\d+)\.(mp3|ogg)", RegexOptions.IgnoreCase);
 
     /// <summary>
     /// Get the <see cref="InfoIndex"/> of a voice files INFO record
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static InfoIndex GetVoiceFormKey(string path)
+    public InfoIndex GetVoiceFormKey(string path)
     {
         var match = VoiceRegex.Match(path);
         if (!match.Success)
@@ -72,7 +93,17 @@ public static class Program
 
     }
 
-    public static bool IsMp3Valid(Stream data, [NotNullWhen(false)] out string? error)
+    public bool IsAudioValid(IArchiveFile file, [NotNullWhen(false)] out string? error)
+    {
+        if (file.Path.EndsWith(".mp3"))
+            return IsMp3Valid(new MemoryStream(file.GetBytes()), out error);
+        else if (file.Path.EndsWith(".ogg"))
+            return IsOggValid(new MemoryStream(file.GetBytes()), out error);
+        else
+            throw new ArgumentException("Unsupported file type", nameof(file));
+    }
+
+    public bool IsMp3Valid(Stream data, [NotNullWhen(false)] out string? error)
     {
         try
         {
@@ -95,20 +126,49 @@ public static class Program
         }
     }
 
-    public static IOblivionLoadOrder CreateLoadOrder(string dataDir, List<string> plugins)
+    public bool IsOggValid(Stream data, [NotNullWhen(false)] out string? error)
     {
-        var pluginMods = plugins
-            .Select(plugin => OblivionMod.CreateFromBinaryOverlay(Path.Combine(dataDir, plugin)))
-            .Select(mod => new ModListing<IOblivionModGetter>(mod));
+        try
+        {
+            using (var reader = new VorbisWaveReader(data))
+            {
+                while (reader.ReadByte() != -1)
+                {
 
-        return new LoadOrder<IModListing<IOblivionModGetter>>(pluginMods);
+                }
+            }
+
+            error = null;
+            return true;
+        }
+        catch (InvalidDataException e)
+        {
+            error = e.Message;
+            return false;
+        }
     }
 
-    public static List<Line> LinesFromLoadOrder(IOblivionLoadOrder loadOrder, List<IArchiveReader> archives, string languageCode)
-    {
-        var lines = new List<Line>();
+    public abstract TMod CreateMod(ModPath path);
 
-        var linkCache = loadOrder.ToImmutableLinkCache();
+    public ILoadOrder<IModListing<TMod>> CreateLoadOrder(string dataDir, List<string> plugins)
+    {
+        var pluginMods = plugins
+            .Select(plugin => CreateMod(Path.Combine(dataDir, plugin)))
+            .Select(mod => new ModListing<TMod>(mod));
+
+        return new LoadOrder<IModListing<TMod>>(pluginMods);
+    }
+
+    public abstract IEnumerable<TDialogInfo> EnumerateInfos(ILoadOrder<IModListing<TMod>> order);
+
+    public abstract IReadOnlyList<TInfoEntry> GetResponses(TDialogInfo info);
+
+    public abstract Line MakeLine(TInfoEntry infoEntry, string path);
+
+    public List<Line> GetAndExtractLines(ILoadOrder<IModListing<TMod>> loadOrder, List<IArchiveReader> archives, string languageCode)
+    {
+        // Give a large initial capacity to reduce time spent resizing
+        var lines = new List<Line>(65536);
 
         var byPath = archives
             .SelectMany(bsa => bsa.Files)
@@ -120,11 +180,11 @@ public static class Program
             .ToDictionary(group => group.Key, group => group.ToList());
 
 
-        Parallel.ForEach(loadOrder.PriorityOrder.DialogItem().WinningOverrides(), response =>
+        Parallel.ForEach(EnumerateInfos(loadOrder), response =>
         {
-            for (int i = 0; i < response.Responses.Count; i++)
+            for (int i = 0; i < GetResponses(response).Count; i++)
             {
-                var line = response.Responses[i];
+                var line = GetResponses(response)[i];
 
                 if (!byPath.TryGetValue(new(response.FormKey, i + 1), out var files))
                     continue;
@@ -132,21 +192,20 @@ public static class Program
                 foreach (var file in files)
                 {
                     // Some files are empty or corrupted. Remove them here
-                    byte[] bytes = file.GetBytes();
-                    if (IsMp3Valid(new MemoryStream(bytes), out var error))
+                    if (IsAudioValid(file, out var error))
                     {
                         //Console.WriteLine($"Extract {file.Path}");
                         var extractedPath = Path.Combine("voice", languageCode, file.Path);
 
                         Directory.CreateDirectory(Path.GetDirectoryName(extractedPath));
-                        File.WriteAllBytes(extractedPath, bytes);
+                        File.WriteAllBytes(extractedPath, file.GetBytes());
 
                         lock (lines)
-                            lines.Add(new Line(line, extractedPath));
+                            lines.Add(MakeLine(line, extractedPath));
                     }
                     else
                     {
-                        Console.WriteLine($"Invalid MP3 {file.Path}:");
+                        Console.WriteLine($"Invalid file {file.Path}:");
                         Console.WriteLine(error);
                     }
                 }
@@ -156,7 +215,7 @@ public static class Program
         return lines;
     }
 
-    public static List<Line> ExtractData(List<string> plugins, List<string> archives, string dataRoot, List<string> dataDirs)
+    public List<Line> ExtractData(List<string> plugins, List<string> archives, string dataRoot, List<string> dataDirs)
     {
         var lines = new List<Line>();
 
@@ -169,12 +228,63 @@ public static class Program
                 .Select(bsa => Archive.CreateReader(GameRelease.Oblivion, Path.Combine(fullPath, bsa)))
                 .ToList();
 
-            lines.AddRange(LinesFromLoadOrder(loadOrder, thisArchives, dataDir));
+            lines.AddRange(GetAndExtractLines(loadOrder, thisArchives, dataDir));
         }
 
         return lines;
     }
+}
 
+public class OblivionPatcher : Patcher<IOblivionModGetter, IDialogItemGetter, Mutagen.Bethesda.Oblivion.IDialogResponseGetter>
+{
+    public override IOblivionModGetter CreateMod(ModPath path)
+    {
+        return OblivionMod.CreateFromBinaryOverlay(path);
+    }
+
+    public override IEnumerable<IDialogItemGetter> EnumerateInfos(IOblivionLoadOrder loadOrder)
+    {
+        return loadOrder.PriorityOrder.DialogItem().WinningOverrides();
+    }
+
+    public override IReadOnlyList<Mutagen.Bethesda.Oblivion.IDialogResponseGetter> GetResponses(IDialogItemGetter info)
+    {
+        return info.Responses;
+    }
+
+    public override Line MakeLine(Mutagen.Bethesda.Oblivion.IDialogResponseGetter infoEntry, string path)
+    {
+        return new Line(infoEntry, path);
+    }
+}
+
+// Mutagen doesn't oficially supprot new vegas, but skyrim uses a similar enough format for dialog infos to be read
+// Trying to load as OblivionMod threw an exception about an invalid GRUP
+public class NvPatcher : Patcher<ISkyrimModGetter, IDialogResponsesGetter, Mutagen.Bethesda.Skyrim.IDialogResponseGetter>
+{
+    public override ISkyrimModGetter CreateMod(ModPath path)
+    {
+        return SkyrimMod.CreateFromBinaryOverlay(path, SkyrimRelease.SkyrimLE);
+    }
+
+    public override IEnumerable<IDialogResponsesGetter> EnumerateInfos(ILoadOrder<IModListing<ISkyrimModGetter>> order)
+    {
+        return order.PriorityOrder.DialogResponses().WinningOverrides();
+    }
+
+    public override IReadOnlyList<Mutagen.Bethesda.Skyrim.IDialogResponseGetter> GetResponses(IDialogResponsesGetter info)
+    {
+        return info.Responses;
+    }
+
+    public override Line MakeLine(Mutagen.Bethesda.Skyrim.IDialogResponseGetter infoEntry, string path)
+    {
+        return new Line(infoEntry, path);
+    }
+}
+
+public static class Program
+{
     public static void Main(string[] args)
     {
         // Using game pass version as it downloads all languages
@@ -227,10 +337,26 @@ public static class Program
             "OldWorldBlues - Main.bsa",
         };
 
-        var data = ExtractData(oblivionPlugins, oblivionArchives, oblivionDataRoot, oblivionDataDirs);
+        var newVegasDataRoot = @"E:\XboxGames\Fallout- New Vegas Ultimate Edition (PC)\Content";
+
+        var newVegasDataDirs = new List<string>()
+        {
+            @"Fallout New Vegas English\Data",
+            @"Fallout New Vegas French\Data",
+            @"Fallout New Vegas German\Data",
+            @"Fallout New Vegas Italian\Data",
+            @"Fallout New Vegas Spanish\Data",
+        };
+
+        var data = new OblivionPatcher().ExtractData(oblivionPlugins, oblivionArchives, oblivionDataRoot, oblivionDataDirs);
 
         using var writer = new StreamWriter("extracted_data_oblivion.csv");
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csv.WriteRecords(data);
+
+        var dataNv = new NvPatcher().ExtractData(newVegasPlugins, newVegasArchives, newVegasDataRoot, newVegasDataDirs);
+        using var writerNv = new StreamWriter("extracted_data_new_vegas.csv");
+        using var csv = new CsvWriter(writerNv, CultureInfo.InvariantCulture);
+        csv.WriteRecords(dataNv);
     }
 }
