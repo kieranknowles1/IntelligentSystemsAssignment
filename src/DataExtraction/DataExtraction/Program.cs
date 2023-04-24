@@ -66,6 +66,7 @@ public class Line
     public string Text { get; }
     public string EmotionType { get; }
     public int EmotionValue { get; }
+    // Path relative to voice\ directory
     public string ExtractedPath { get; }
 }
 
@@ -93,6 +94,10 @@ public abstract class Patcher<TMod, TDialogInfo, TInfoEntry>
 
     }
 
+    // Some files are empty or nearly empty. Windows media player refuses to play these, no sure about MATLAB
+    // Exclude them to be safe, these likely won't contribute much anyway
+    public static readonly TimeSpan MinAudioDuration = TimeSpan.FromSeconds(0.25);
+
     public bool IsAudioValid(IArchiveFile file, [NotNullWhen(false)] out string? error)
     {
         if (file.Path.EndsWith(".mp3"))
@@ -109,10 +114,15 @@ public abstract class Patcher<TMod, TDialogInfo, TInfoEntry>
         {
             using (var reader = new Mp3FileReader(data))
             {
+                if (reader.TotalTime < MinAudioDuration)
+                {
+                    error = "File is too short";
+                    return false;
+                }
+
                 // Read all frames, but don't do anything with them to validate the file
                 while (reader.ReadNextFrame() != null)
                 {
-
                 }
             }
 
@@ -132,6 +142,12 @@ public abstract class Patcher<TMod, TDialogInfo, TInfoEntry>
         {
             using (var reader = new VorbisWaveReader(data))
             {
+                if (reader.TotalTime < MinAudioDuration)
+                {
+                    error = "File is too short";
+                    return false;
+                }
+
                 while (reader.ReadByte() != -1)
                 {
 
@@ -200,8 +216,10 @@ public abstract class Patcher<TMod, TDialogInfo, TInfoEntry>
                         Directory.CreateDirectory(Path.GetDirectoryName(extractedPath));
                         File.WriteAllBytes(extractedPath, file.GetBytes());
 
+                        var relativePath = Path.Combine(languageCode, file.Path);
+
                         lock (lines)
-                            lines.Add(MakeLine(line, extractedPath));
+                            lines.Add(MakeLine(line, relativePath));
                     }
                     else
                     {
@@ -314,8 +332,9 @@ public static class Program
             @"Oblivion GOTY English\Data",
             @"Oblivion GOTY French\Data",
             @"Oblivion GOTY German\Data",
-            @"Oblivion GOTY Italian\Data",
-            @"Oblivion GOTY Spanish\Data",
+            // These versions use the English recordings for dialogue
+            //@"Oblivion GOTY Italian\Data",
+            //@"Oblivion GOTY Spanish\Data",
         };
 
         // Like Oblivion, only include plugins and archives with dialogue
@@ -356,7 +375,7 @@ public static class Program
 
         var dataNv = new NvPatcher().ExtractData(newVegasPlugins, newVegasArchives, newVegasDataRoot, newVegasDataDirs);
         using var writerNv = new StreamWriter("extracted_data_new_vegas.csv");
-        using var csv = new CsvWriter(writerNv, CultureInfo.InvariantCulture);
-        csv.WriteRecords(dataNv);
+        using var csvNv = new CsvWriter(writerNv, CultureInfo.InvariantCulture);
+        csvNv.WriteRecords(dataNv);
     }
 }
