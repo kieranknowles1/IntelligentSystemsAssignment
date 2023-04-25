@@ -9,6 +9,8 @@ write_counts_table(annotations_ob.EmotionType, "out/category_counts_oblivion.csv
 samplerate_nv = 22050;
 write_counts_table(annotations_nv.EmotionType, "out/category_counts_new_vegas.csv");
 
+save('extracted_data.mat');
+
 function [annotations, datastore] = load_data(csvPath, voicePath)
     annotations = readtable(csvPath, "Delimiter", ",");
     annotations.EmotionType = categorical(annotations.EmotionType);
