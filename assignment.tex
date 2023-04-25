@@ -132,7 +132,7 @@ See tables \ref{table:category_counts_oblivion} and \ref{table:category_counts_n
 The data extraction script outputs a CSV file that can then be imported into MATLAB.
 
 //TODO: This
-
+//TODO: Column for totals and percentages
 \begin{table}[h]
     \begin{center}
         \begin{tabular}{| c | c |}
@@ -160,6 +160,18 @@ The data extraction script outputs a CSV file that can then be imported into MAT
         \label{table:category_counts_new_vegas}
     \end{center}
 \end{table}
+
+\subsection{Training}
+Due to limited memory, the neutral samples from both datasets were trimmed down to //TODO: How many?
+samples for each dataset through random sampling. The remaining samples were then split into training, test, and
+validation sets with a 90\%, 5\%, and 5\% split respectively.
+
+The neutral samples were selected for trimming as they made up a significant proportion of both
+datasets, more so for New Vegas than Oblivion. See tables \ref{table:category_counts_oblivion}
+and \ref{table:category_counts_new_vegas} for the exact proportions.
+
+The low size for the test and validation sets was chosen due to the large size of the training set,
+even after the neutral samples were trimmed down.
 
 \subsection{Source Code}
 //TODO: How to include this?
