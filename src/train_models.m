@@ -1,7 +1,8 @@
 NUM_UNITS = 200;
-BATCH_SIZE = 512;
+% Adjust based on available GPU memory. 256 works on a 10gb card
+BATCH_SIZE = 256;
 INITIAL_LEARNING_RATE = 0.005;
-MAX_EPOCHS = 10;
+MAX_EPOCHS = 100;
 
 if ~exist('data', 'var')
     data = load('extracted_data.mat');
@@ -24,11 +25,14 @@ extractor = audioFeatureExtractor( ...
     spectralCrest=true ...
 );
 
+disp("Trim neutal annotations");
+trimmed = trim_category(data.annotations_ob, 'Neutral', 20000);
+
 % //TODO: 5% For testing
 % Split data into training, and validation sets.
 % 95% training, 5% validation. Can get away with this as the dataset is large
 disp("Split data");
-[files_train, files_validate, labels_train, labels_validate] = split_data(data.annotations_ob, 0.95);
+[files_train, files_validate, labels_train, labels_validate] = split_data(trimmed, 0.95);
 
 disp("Extract features");
 
@@ -54,7 +58,8 @@ layers = [
 ];
 
 disp("Creating training options. This will take a while");
-validateTable = table(tallValidate, tall(labels_validate));
+
+[validateData, validateLabels] = remove_nans(gather(tallValidate), labels_validate);
 
 options = trainingOptions("sgdm", ...
     Plots="training-progress", ...
@@ -64,21 +69,20 @@ options = trainingOptions("sgdm", ...
     ExecutionEnvironment="multi-gpu", ...
     Shuffle="every-epoch", ...
     ... % Save the state of the network every epoch. May want to do this more often
-    CheckpointPath=pwd(), ...
-    ValidationData=gather(validateTable)...
+    CheckpointPath=pwd() ...
+    ... % Can't get this to work. Documentation is terrible and even ChatGPT wasn't helpful
+    ... % ValidationData={validateData, validateLabels}
 );
 
 disp("Loading all training data");
-predictors = gather(tallTrain);
-
-disp("Saving prepared data");
-% Need to use v7.3 due to predictors being >2gb
-% Save to the E drive to save space on the SSD
-save("E:/IntelligentSystems/"data_prepped_ob.mat"", '-v7.3');
+[predictors, labels] = remove_nans(gather(tallTrain), labels_train);
 
 disp("Training network. This will take longer");
 
-network = trainNetwork(predictors, labels_train, layers, options);
+network = trainNetwork(predictors, labels, layers, options);
+
+disp("Saving trained network");
+save("network_ob.mat", "network");
 
 function [trainFiles, validateFiles, trainLabels, validateLabels] = split_data(data, trainFraction)
     numTrain = round(trainFraction * height(data));
@@ -95,4 +99,31 @@ end
 function [transformed] = load_and_transform(extractor, file)
     data = audioread(file);
     transformed = extract(extractor, data)';
+end
+
+function [cleaned, cleanedLabels] = remove_nans(data, labels)
+    % Remove all rows with NaNs
+    % Not sure how they got there in the first place
+
+    good = zeros(height(data), 1);
+    for i = 1:height(data)
+        good(i) = ~anynan(data{i});
+    end
+
+    cleaned = data(find(good));
+    cleanedLabels = labels(find(good));
+end
+
+function [trimmed] = trim_category(data, category, newCount)
+    % Trim the specified category to the given number of samples
+    % This is done by randomly selecting samples to keep
+
+    % Get the indices of the samples to keep
+    indices = randsample(find(data.EmotionType == category), newCount);
+
+    % Add all samples from other categories
+    keep = [indices; find(data.EmotionType ~= category)];
+
+    % Remove all samples not in the keep list
+    trimmed = data(keep, :);
 end
