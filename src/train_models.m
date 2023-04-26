@@ -74,7 +74,7 @@ predictors = gather(tallTrain);
 disp("Saving prepared data");
 % Need to use v7.3 due to predictors being >2gb
 % Save to the E drive to save space on the SSD
-save("E:/IntelligentSystems/"data_prepped_ob.mat"", '-v7.3');
+save("E:/IntelligentSystems/data_prepped_ob.mat", '-v7.3');
 
 disp("Training network. This will take longer");
 
