@@ -1,6 +1,6 @@
-NUM_UNITS = 200;
-% Adjust based on available GPU memory. 256 works on a 10gb card
-BATCH_SIZE = 256;
+NUM_UNITS = 512;
+% Adjust based on available GPU memory. The option provided here works on a 10gb card
+BATCH_SIZE = 64;
 INITIAL_LEARNING_RATE = 0.005;
 MAX_EPOCHS = 100;
 

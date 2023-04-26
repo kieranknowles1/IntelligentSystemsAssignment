@@ -172,7 +172,7 @@ The data extraction script outputs a CSV file that can then be imported into MAT
 \end{table}
 
 \subsection{Network Architecture}
-The network consists of a single BiLSTM layer with 200 hidden units and outputs the last time step.
+The network consists of a single BiLSTM layer with 512 hidden units and outputs the last time step.
 Dropout layers with a rate of 0.2 for the input and 0.5 for the output are used before and after
 the BiLSTM layer to prevent overfitting. \cite{hinton_improving_2012}
 
@@ -181,6 +181,8 @@ sentiment in the dataset (seven for Oblivion and eight for New Vegas).
 
 The output of this layer is then passed through a softmax layer then a classification layer
 to produce the final output.
+
+The network was trained with a learning rate of 0.01 for 100 epochs. See //TODO: Results for the training and loss curves.
 
 //TODO: Diagram of network
 
