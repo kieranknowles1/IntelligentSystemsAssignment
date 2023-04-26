@@ -1,5 +1,15 @@
 \documentclass[journal]{IEEEtran}
 
+\usepackage{listings}
+\usepackage{xcolor}
+
+% https://tex.stackexchange.com/questions/116534/lstlisting-line-wrapping
+\lstset{
+    frame=single,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
 \usepackage{csvsimple}
 \usepackage{hyperref}
 
@@ -186,9 +196,6 @@ and \ref{table:category_counts_new_vegas} for the exact proportions.
 The low size for the test and validation sets was chosen due to the large size of the training set,
 even after the neutral samples were trimmed down.
 
-\subsection{Source Code}
-//TODO: How to include this?
-
 \section{Results and Discussion}
 //TODO: This
 
@@ -196,6 +203,16 @@ even after the neutral samples were trimmed down.
 //TODO: This
 
 %TC: ignore
+
+\section*{Appendix}
+\subsection*{Source Code}
+
+import\textunderscore data.m
+\lstinputlisting[language=Matlab]{src/import_data.m}
+
+train\textunderscore models.m
+\lstinputlisting[language=Matlab]{src/train_models.m}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{assignment}
