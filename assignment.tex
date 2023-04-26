@@ -1,5 +1,15 @@
 \documentclass[journal]{IEEEtran}
 
+\usepackage{listings}
+\usepackage{xcolor}
+
+% https://tex.stackexchange.com/questions/116534/lstlisting-line-wrapping
+\lstset{
+    frame=single,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
 \usepackage{csvsimple}
 \usepackage{hyperref}
 
@@ -77,9 +87,9 @@ This study uses the games Fallout New Vegas \cite{noauthor_buy_nodate} and
 The Elder Scrolls IV: Oblivion \cite{noauthor_elder_nodate} as training data as
 Oblivion uses the same system in which every line of dialogue is annotated with one of seven sentiments
 (anger, disgust, fear, happy, neutral, sad, and surprised) and the game is voiced in three of the same five languages
-(English, French, and German. The Spanish and Italian versions uses the English voicess).
+(English, French, and German. The Spanish and Italian versions use the same voices as the English version).
 
-For both of these games, the Microsoft Store versions were used as these include all five languages
+For both of these games, the Microsoft Store versions were used as these include all available languages
 in the same download. This simplified the process of downloading the data before extracting it.
 
 Oblivion is known for sometimes having over-emphasised emotions in its dialogue.
@@ -161,8 +171,21 @@ The data extraction script outputs a CSV file that can then be imported into MAT
     \end{center}
 \end{table}
 
+\subsection{Network Architecture}
+The network consists of a single BiLSTM layer with 200 hidden units and outputs the last time step.
+Dropout layers with a rate of 0.2 for the input and 0.5 for the output are used before and after
+the BiLSTM layer to prevent overfitting. \cite{hinton_improving_2012}
+
+This is then followed by a fully connected layer with one output for each
+sentiment in the dataset (seven for Oblivion and eight for New Vegas).
+
+The output of this layer is then passed through a softmax layer then a classification layer
+to produce the final output.
+
+//TODO: Diagram of network
+
 \subsection{Training}
-Due to limited memory, the neutral samples from both datasets were trimmed down to //TODO: How many?
+Due to limited memory, the neutral samples from both datasets were trimmed down to 20,000
 samples for each dataset through random sampling. The remaining samples were then split into training, test, and
 validation sets with a 90\%, 5\%, and 5\% split respectively.
 
@@ -173,9 +196,6 @@ and \ref{table:category_counts_new_vegas} for the exact proportions.
 The low size for the test and validation sets was chosen due to the large size of the training set,
 even after the neutral samples were trimmed down.
 
-\subsection{Source Code}
-//TODO: How to include this?
-
 \section{Results and Discussion}
 //TODO: This
 
@@ -183,6 +203,16 @@ even after the neutral samples were trimmed down.
 //TODO: This
 
 %TC: ignore
+
+\section*{Appendix}
+\subsection*{Source Code}
+
+import\textunderscore data.m
+\lstinputlisting[language=Matlab]{src/import_data.m}
+
+train\textunderscore models.m
+\lstinputlisting[language=Matlab]{src/train_models.m}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{assignment}
