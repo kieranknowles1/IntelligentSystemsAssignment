@@ -1,8 +1,9 @@
-Name,Count
-Anger,13175
-Disgust,6404
-Fear,7109
-Happy,15131
-Neutral,65589
-Sad,5180
-Surprise,5991
+Name,Count,Proportion
+Anger,13175,0.11
+Disgust,6404,0.05
+Fear,7109,0.06
+Happy,15131,0.13
+Neutral,65589,0.55
+Sad,5180,0.04
+Surprise,5991,0.05
+Total,118579,1

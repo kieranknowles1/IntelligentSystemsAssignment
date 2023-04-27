@@ -145,11 +145,11 @@ The data extraction script outputs a CSV file that can then be imported into MAT
 //TODO: Column for totals and percentages
 \begin{table}[h]
     \begin{center}
-        \begin{tabular}{| c | c |}
+        \begin{tabular}{| c | c | c |}
             \hline
-            Category & Sample Count
+            Category & Sample Count & Proportion
             \csvreader[head to column names]{src/out/category_counts_oblivion.csv}{}%
-            {\\ \hline \Name & \Count}%
+            {\\ \hline \Name & \Count & \Proportion}%
             \\ \hline
         \end{tabular}
         \caption{The number of samples in each category for Oblivion}
@@ -159,11 +159,11 @@ The data extraction script outputs a CSV file that can then be imported into MAT
 
 \begin{table}[h]
     \begin{center}
-        \begin{tabular}{| c | c |}
+        \begin{tabular}{| c | c | c |}
             \hline
-            Category & Sample Count
+            Category & Sample Count & Proportion
             \csvreader[head to column names]{src/out/category_counts_new_vegas.csv}{}%
-            {\\ \hline \Name & \Count}%
+            {\\ \hline \Name & \Count & \Proportion}%
             \\ \hline
         \end{tabular}
         \caption{The number of samples in each category for New Vegas}
