@@ -61,7 +61,7 @@ model. The hypothesis is that having more emphasised emotions in training data c
 model, even when running on less emphasised speech.
 
 While computer sentiment analysis has existed for decades \cite{stone_computer_1963}, existing research has primarily focused on
-its use with text rather than speech. //TODO: Source
+its use with text rather than speech. \cite{maghilnan_sentiment_2017}
 
 This review is incomplete however as it doesn't cover how the emphasis of sentiments in training data impacts the performance of a model.
 Whilst researching this subject, no papers on the subject were found.
@@ -113,7 +113,10 @@ this is a limitation of the study that cannot be overcome with the data that is 
 
 \section{Methods}
 \subsection{Considerations}
-//TODO: This. Lack of actor variety, copyright (maybe in results and discussion)
+Using copyrighted works as training data appears to be legal under US law as "copyright
+infringement requires not just copying of a work's material form but also the unauthorized
+use of the work for its expressive purpose." \cite{quang_does_2021} However, at the time of writing,
+there are several ongoing lawsuits regarding the use of copyrighted material as training data. \cite{loving_current_2023}
 
 Some lines of dialogue have actor notes which provided additional context to
 the voice actors. These notes may lead actors to show a sentiment that does not
@@ -148,7 +151,6 @@ The data extraction script outputs a CSV file that can then be imported into MAT
 The "Pained" sentiment was removed from the New Vegas dataset as it does not exist in Oblivion and could therefore
 interfere with the comparison between the two datasets.
 
-//TODO: This
 \begin{table}[h]
     \begin{center}
         \begin{tabular}{| c | c | c |}
@@ -220,7 +222,6 @@ even after the neutral samples were trimmed down.
 
 \section*{Appendix}
 \subsection*{Source Code}
-% //TODO: This
 
 \codelisting{load\textunderscore and \textunderscore transform.m}{src/load_and_transform.m}
 \codelisting{load\textunderscore data.m}{src/load_data.m}
