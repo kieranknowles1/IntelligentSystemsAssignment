@@ -27,11 +27,11 @@ save('network_nv.mat', 'network_nv');
 
 % Benchmark both models
 
-results_ob_same = test_network(network_ob, testdata_ob, testlabels_ob);
-results_nv_same = test_network(network_nv, testdata_nv, testlabels_nv);
+results_ob_same = predict(network_ob, testdata_ob);
+results_nv_same = predict(network_nv, testdata_nv);
 
-results_ob_other = test_network(network_ob, testdata_nv, testlabels_nv);
-results_nv_other = test_network(network_nv, testdata_ob, testlabels_ob);
+results_ob_other = predict(network_ob, testdata_nv);
+results_nv_other = predict(network_nv, testdata_ob);
 
 % Display confusion matrices and save them to files
 
