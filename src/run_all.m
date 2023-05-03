@@ -22,4 +22,28 @@ save('network_ob.mat', 'network_ob');
 [network_nv, testdata_nv, testlabels_nv] = train_single(annotations_nv, samplerate_nv, 'in/newvegas/voice/');
 save('network_nv.mat', 'network_nv');
 
-% //TODO: Benchmark both models
+% Benchmark both models
+
+results_ob_same = test_network(network_ob, testdata_ob, testlabels_ob);
+results_nv_same = test_network(network_nv, testdata_nv, testlabels_nv);
+
+results_ob_other = test_network(network_ob, testdata_nv, testlabels_nv);
+results_nv_other = test_network(network_nv, testdata_ob, testlabels_ob);
+
+% Display confusion matrices and save them to files
+
+figure;
+subplot(2, 2, 1);
+confusionmat(results_ob_same, categorical(testlabels_ob));
+title('Oblivion - same dataset');
+subplot(2, 2, 2);
+confusionmat(results_ob_other, categorical(testlabels_nv));
+title('Oblivion - different dataset');
+subplot(2, 2, 3);
+confusionmat(results_nv_same, categorical(testlabels_nv));
+title('New Vegas - same dataset');
+subplot(2, 2, 4);
+confusionmat(results_nv_other, categorical(testlabels_ob));
+title('New Vegas - different dataset');
+
+saveas(gcf, 'out/confusion_matrices.svg');

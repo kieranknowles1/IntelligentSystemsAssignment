@@ -25,9 +25,8 @@ function [network, testData, testLabels] = train_single(fileEmotion, sampleRate,
     disp("Trim neutal annotations");
     trimmed = trim_category(fileEmotion, 'Neutral', 20000);
 
-    % //TODO: 5% For testing
-    % Split data into training, and validation sets.
-    % 95% training, 5% validation. Can get away with this as the dataset is large
+    % Split data into training, and test sets.
+    % 95% training, 5% test. Can get away with this as the dataset is large
     disp("Split data");
     [files_train, files_validate, labels_train, labels_validate] = split_data(trimmed, 0.95);
 

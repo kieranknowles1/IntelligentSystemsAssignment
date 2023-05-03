@@ -324,7 +324,6 @@ public static class Program
             "Knights.bsa",
         };
 
-        // TODO: Dehardcode
         var oblivionDataRoot = @"E:\XboxGames\The Elder Scrolls IV- Oblivion (PC)\Content";
 
         var oblivionDataDirs = new List<string>()
