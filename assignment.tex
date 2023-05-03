@@ -1,5 +1,7 @@
 \documentclass[journal]{IEEEtran}
 
+\usepackage{graphicx}
+
 \usepackage{listings}
 \usepackage{xcolor}
 
@@ -182,9 +184,15 @@ sentiment in the dataset (seven for Oblivion and eight for New Vegas).
 The output of this layer is then passed through a softmax layer then a classification layer
 to produce the final output.
 
+See figure \ref{fig:network} for a visualisation of the network architecture.
+
 The network was trained with a learning rate of 0.01 for 100 epochs. See //TODO: Results for the training and loss curves.
 
-//TODO: Diagram of network
+\begin{figure}
+    \includegraphics{network.png}
+    \caption{The network architecture}
+    \label{fig:network}
+\end{figure}
 
 \subsection{Training}
 Due to limited memory, the neutral samples from both datasets were trimmed down to 20,000
