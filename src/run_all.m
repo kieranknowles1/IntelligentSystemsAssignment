@@ -12,6 +12,9 @@ annotations_nv = load_data("in/newvegas/extracted_data_new_vegas.csv");
 samplerate_nv = 22050;
 write_counts_table(annotations_nv.EmotionType, "out/category_counts_new_vegas.csv");
 
+% Remove the "Pained" category from the New Vegas data as this is not present in Oblivion
+annotations_nv = annotations_nv(annotations_nv.EmotionType ~= "Pained", :);
+
 save('extracted_data.mat');
 
 % Train both models
