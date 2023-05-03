@@ -1,4 +1,4 @@
-function [network] = train_single(fileEmotion, sampleRate, voicePath)
+function [network, testData, testLabels] = train_single(fileEmotion, sampleRate, voicePath)
     NUM_UNITS = 512;
     % Adjust based on available GPU memory. The option provided here works on a 10gb card
     BATCH_SIZE = 64;
@@ -56,7 +56,7 @@ function [network] = train_single(fileEmotion, sampleRate, voicePath)
 
     disp("Creating training options. This will take a while");
 
-    [validateData, validateLabels] = remove_nans(gather(tallValidate), labels_validate);
+    [testData, testLabels] = remove_nans(gather(tallValidate), labels_validate);
 
     options = trainingOptions("sgdm", ...
         Plots="training-progress", ...

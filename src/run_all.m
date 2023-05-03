@@ -16,10 +16,10 @@ save('extracted_data.mat');
 
 % Train both models
 
-network_ob = train_single(annotations_ob, samplerate_ob, 'in/oblivion/voice/');
+[network_ob, testdata_ob, testlabels_ob] = train_single(annotations_ob, samplerate_ob, 'in/oblivion/voice/');
 save('network_ob.mat', 'network_ob');
 
-network_nv = train_single(annotations_nv, samplerate_nv, 'in/newvegas/voice/');
+[network_nv, testdata_nv, testlabels_nv] = train_single(annotations_nv, samplerate_nv, 'in/newvegas/voice/');
 save('network_nv.mat', 'network_nv');
 
 % //TODO: Benchmark both models
