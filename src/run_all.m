@@ -29,26 +29,26 @@ save('data_nv.mat', 'testdata_nv', 'testlabels_nv')
 
 % Benchmark both models
 
-results_ob_same = predict(network_ob, testdata_ob);
-results_nv_same = predict(network_nv, testdata_nv);
+results_ob_ob = test_model(network_ob, testdata_ob, categories(testlabels_ob));
+results_nv_nv = test_model(network_nv, testdata_nv, categories(testlabels_ob));
 
-results_ob_other = predict(network_ob, testdata_nv);
-results_nv_other = predict(network_nv, testdata_ob);
+results_ob_nv = test_model(network_ob, testdata_nv, categories(testlabels_nv));
+results_nv_ob = test_model(network_nv, testdata_ob, categories(testlabels_nv));
 
 % Display confusion matrices and save them to files
 
 figure;
-subplot(2, 2, 1);
-confusionmat(results_ob_same, categorical(testlabels_ob));
-title('Oblivion - same dataset');
-subplot(2, 2, 2);
-confusionmat(results_ob_other, categorical(testlabels_nv));
-title('Oblivion - different dataset');
-subplot(2, 2, 3);
-confusionmat(results_nv_same, categorical(testlabels_nv));
-title('New Vegas - same dataset');
-subplot(2, 2, 4);
-confusionmat(results_nv_other, categorical(testlabels_ob));
-title('New Vegas - different dataset');
+confusionchart(testlabels_ob, results_ob_ob);
+saveas(gcf, 'out/confusion_matrices_ob_ob.svg');
 
-saveas(gcf, 'out/confusion_matrices.svg');
+figure;
+confusionchart(testlabels_nv, results_ob_nv);
+saveas(gcf, 'out/confusion_matrices_ob_nv.svg');
+
+figure;
+confusionchart(testlabels_nv, results_nv_nv);
+saveas(gcf, 'out/confusion_matrices_nv_nv.svg');
+
+figure;
+confusionchart(testlabels_ob, results_nv_ob);
+saveas(gcf, 'out/confusion_matrices_nv_ob.svg');

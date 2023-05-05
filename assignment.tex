@@ -2,6 +2,8 @@
 
 \usepackage{graphicx}
 
+\usepackage{svg}
+
 \usepackage{listings}
 \usepackage{xcolor}
 
@@ -126,12 +128,12 @@ Additionally, the neutral emotion is the default emotion for any new line in the
 Because of this, some lines were never annotated with a sentiment despite the recorded
 dialogue showing a specific emotion. See table \ref{table:bad_annotation}
 
-\begin{table}[h]
+\begin{table}
     \begin{tabular}{| c | l |}
         \hline
         Text & Don't try to manipulate me. \\ \hline
         Annotation & Neutral \\ \hline
-        File & oblivion.esm\textbackslash nord\textbackslash f\textbackslash generic\textunderscore admirehate\textunderscore 00062311\textunderscore 1.mp3 \\ \hline
+        File & nord\textbackslash f\textbackslash generic\textunderscore admirehate\textunderscore 00062311\textunderscore 1.mp3 \\ \hline
         Actual emotion & Anger \\ \hline
     \end{tabular}
     \caption{An example of a lines annotation not matching the recording}
@@ -212,8 +214,53 @@ and \ref{table:category_counts_new_vegas} for the exact proportions.
 The low size for the test and validation sets was chosen due to the large size of the training set,
 even after the neutral samples were trimmed down.
 
+See figures \ref{fig:training_ob} and \ref{fig:training_nv} for the training and loss curves for
+Oblivion and New Vegas respectively.
+
+\begin{figure}
+    \includegraphics[width=\columnwidth]{src/out/training_ob.png}
+    \caption{The training and loss curves for Oblivion}
+    \label{fig:training_ob}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\columnwidth]{src/out/training_nv.png}
+    \caption{The training and loss curves for New Vegas}
+    \label{fig:training_nv}
+\end{figure}
+
 \section{Results and Discussion}
-//TODO: This
+Unfortunately, both networks failed to produce any meaningful results and instead returned
+the Anger sentiment for the vast majority of samples. See figures \ref{fig:confusion_ob_same},
+\ref{fig:confusion_ob}, \ref{fig:confusion_nv_same}, and \ref{fig:confusion_nv} for
+the confusion matrices for both models with the same and the other dataset.
+
+Due to time constraints, the cause of this issue could not be investigated further
+or resolved.
+
+\begin{figure}
+    \includesvg[width=\columnwidth]{src/out/confusion_matrices_ob_ob.svg}
+    \caption{The confusion matrix for Oblivion using the Oblivion model}
+    \label{fig:confusion_ob_same}
+\end{figure}
+
+\begin{figure}
+    \includesvg[width=\columnwidth]{src/out/confusion_matrices_ob_nv.svg}
+    \caption{The confusion matrix for Oblivion using the New Vegas model}
+    \label{fig:confusion_ob}
+\end{figure}
+
+\begin{figure}
+    \includesvg[width=\columnwidth]{src/out/confusion_matrices_nv_nv.svg}
+    \caption{The confusion matrix for New Vegas using the New Vegas model}
+    \label{fig:confusion_nv_same}
+\end{figure}
+
+\begin{figure}
+    \includesvg[width=\columnwidth]{src/out/confusion_matrices_nv_ob.svg}
+    \caption{The confusion matrix for New Vegas using the Oblivion model}
+    \label{fig:confusion_nv}
+\end{figure}
 
 \section{Conclusion and future work}
 //TODO: This
@@ -228,6 +275,7 @@ even after the neutral samples were trimmed down.
 \codelisting{remove\textunderscore nans.m}{src/remove_nans.m}
 \codelisting{run\textunderscore all.m}{src/run_all.m}
 \codelisting{split\textunderscore data.m}{src/split_data.m}
+\codelisting{test\textunderscore model.m}{src/test_model.m}
 \codelisting{train\textunderscore single.m}{src/train_single.m}
 \codelisting{trim\textunderscore category.m}{src/trim_category.m}
 \codelisting{write\textunderscore counts\textunderscore table.m}{src/write_counts_table.m}

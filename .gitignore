@@ -8,6 +8,7 @@
 *.out
 *.pdf
 *.synctex.gz
+svg-inkscape/
 
 # Temporary files
 *.tmp
