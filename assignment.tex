@@ -53,8 +53,17 @@ Word count: \wordcount
 %TC: endignore
 
 \begin{abstract}
-    //TODO: This
+    This study aimed to determine how the emphasis of sentiments in training data impacts the
+    performance of a trained sentiment analysis model, with the hypothesis that having more emphasised
+    emotions in training data can improve the performance of the resulting model, even when running
+    on less emphasised speech.
 
+    For this study, the dialogue from two video games was used as training data, Fallout New Vegas and
+    The Elder Scrolls IV: Oblivion. Each line of dialogue was annotated with one of seven sentiments
+    (anger, disgust, fear, happy, neutral, sad, and surprised).
+
+    Unfortunately, the results of this study were inconclusive as both models failed to provide any
+    meaningful results and instead classified the vast majority of lines as angry.
 \end{abstract}
 
 \section{Introduction}
@@ -70,11 +79,7 @@ Whilst researching this subject, no papers on the subject were found.
 This could be because "audio sentiment analysis is still in a nascent stage
 in the research community". \cite{maghilnan_sentiment_2017}
 
-//TODO: This
-
 \section{Literature Review}
-
-//TODO: This
 
 As the purpose of this study was to determine how the emphasis of speech affects
 the performance of a model, only the audio from the training data was used as input,
@@ -194,7 +199,8 @@ to produce the final output.
 
 See figure \ref{fig:network} for a visualisation of the network architecture.
 
-The network was trained with a learning rate of 0.01 for 100 epochs. See //TODO: Results for the training and loss curves.
+The network was trained with an initial learning rate of 0.01 for 100 epochs.
+See figures \ref{fig:training_ob} and \ref{fig:training_nv} for the training and loss curves.
 
 \begin{figure}
     \includegraphics{network.png}
@@ -263,7 +269,9 @@ or resolved.
 \end{figure}
 
 \section{Conclusion and future work}
-//TODO: This
+As the networks both failed to function as intended, no conclusions can be drawn from the results.
+Due to time constraints, the cause of this issue could not be investigated further or resolved.
+As a result, this paper is unable to answer the research question.
 
 %TC: ignore
 
